@@ -2,6 +2,7 @@ import { useState } from "react";
 import Posts from "./Posts";
 import PostById from "./PostById";
 import "./styles.css";
+import CreatePost from "./CreatePost";
 
 export default function App() {
   const [arePostsShown, setArePostsShown] = useState<boolean>(false);
@@ -17,6 +18,7 @@ export default function App() {
           {isPostShown ? "Hide" : "Show"} Post
         </button>
       </div>
+      <CreatePost />
       {arePostsShown && <Posts />}
       {isPostShown && <PostById id={3} />}
     </div>
