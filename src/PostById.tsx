@@ -1,31 +1,13 @@
 //https://tanstack.com/query/latest/docs/framework/react/guides/queries
-import { useQuery } from "@tanstack/react-query";
-const staleTime: number = 1000 * 5;
-
-// Queries still need a place to happen, so the handler of the posts query will be this function which, if all goes well, shoudl return an array with posts
-async function fetchPostById(
-  id: number
-): Promise<{ title: string; body: string; userId: number; id: number }> {
-  const response = await fetch(
-    `https://jsonplaceholder.typicode.com/posts/${id}`
-  );
-  //Accounting for errors
-  if (!response.ok) throw new Error("Error fetching data");
-
-  //Returning whatwever the API call gave us
-  return response.json();
-}
+import { usePostById, usePosts } from "./hooks";
 
 // Fetching data by id with Tanstack Query
 // 1. Have the queryFn receive the param
 // 2. Add the param to the queryKey array so we have an unique queryKey now
 export default function PostById({ id }: { id: number }) {
-  const { data, isLoading, isError, error, isFetching, isPending } = useQuery({
-    queryKey: ["posts", id],
-    queryFn: () => fetchPostById(id),
-    retry: 5,
-    staleTime: staleTime,
-  });
+  const { data, isLoading, isError, error, isFetching, isPending } =
+    usePostById(id);
+  const { data: posts } = usePosts<number>((posts) => posts.length);
 
   //error comes from isError or status === 'error'
   if (isError) return <h1>Something went wrong: {error.message}</h1>;
@@ -38,6 +20,7 @@ export default function PostById({ id }: { id: number }) {
 
   return (
     <div>
+      <h1>Total amount of posts {posts ? posts : ""}</h1>
       <h1>{data.title}</h1>
       <h2>{data.body}</h2>
     </div>
